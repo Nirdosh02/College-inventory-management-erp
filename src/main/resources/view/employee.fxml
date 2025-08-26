@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.collegeinventoryerp.controller.EmployeeController">
+    <top>
+        <VBox styleClass="page-header" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="20.0">
+                    <children>
+                        <Label styleClass="page-title" text="Employee Management" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button onAction="#handleRefresh" styleClass="secondary-button" text="🔄 Refresh" />
+                    </children>
+                </HBox>
+
+                <!-- Search Bar -->
+                <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="filter-bar">
+                    <children>
+                        <Label text="Search:" />
+                        <TextField fx:id="searchField" promptText="Search by name, designation, email..." prefWidth="300.0" />
+
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="clearButton" onAction="#handleClear" styleClass="clear-button" text="Clear Form" />
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </VBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.35" BorderPane.alignment="CENTER">
+            <items>
+                <!-- Employee Form -->
+                <VBox styleClass="form-container" spacing="15.0">
+                    <children>
+                        <Label styleClass="form-title" text="Employee Details" />
+
+                        <VBox spacing="15.0">
+                            <children>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Employee Name *" styleClass="field-label" />
+                                        <TextField fx:id="nameField" promptText="Enter employee name" />
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Designation *" styleClass="field-label" />
+                                        <TextField fx:id="designationField" promptText="Enter job designation" />
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Email Address *" styleClass="field-label" />
+                                        <TextField fx:id="emailField" promptText="Enter email address" />
+                                    </children>
+                                </VBox>
+
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="Phone Number" styleClass="field-label" />
+                                        <TextField fx:id="phoneField" promptText="Enter phone number" />
+                                    </children>
+                                </VBox>
+
+                                <!-- Action Buttons -->
+                                <VBox spacing="10.0">
+                                    <children>
+                                        <Button fx:id="addButton" maxWidth="1.7976931348623157E308" onAction="#handleAdd" styleClass="primary-button" text="Add Employee" />
+                                        <Button fx:id="updateButton" maxWidth="1.7976931348623157E308" onAction="#handleUpdate" styleClass="update-button" text="Update Employee" />
+                                        <Button fx:id="deleteButton" maxWidth="1.7976931348623157E308" onAction="#handleDelete" styleClass="delete-button" text="Delete Employee" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </children>
+                    <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                    </padding>
+                </VBox>
+
+                <!-- Employee Table -->
+                <VBox styleClass="table-container" spacing="10.0">
+                    <children>
+                        <Label styleClass="table-title" text="Employee List" />
+
+                        <TableView fx:id="employeeTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="idColumn" prefWidth="60.0" text="ID" />
+                                <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Name" />
+                                <TableColumn fx:id="designationColumn" prefWidth="150.0" text="Designation" />
+                                <TableColumn fx:id="emailColumn" prefWidth="200.0" text="Email" />
+                                <TableColumn fx:id="phoneColumn" prefWidth="120.0" text="Phone" />
+                            </columns>
+                        </TableView>
+                    </children>
+                    <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                    </padding>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>

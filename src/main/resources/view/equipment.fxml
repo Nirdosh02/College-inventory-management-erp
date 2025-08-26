@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.collegeinventoryerp.controller.EquipmentController">
+    <top>
+        <VBox styleClass="page-header" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="20.0">
+                    <children>
+                        <Label styleClass="page-title" text="Equipment Management" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <HBox spacing="10.0">
+                            <children>
+                                <Button onAction="#handleRefresh" styleClass="secondary-button" text="🔄 Refresh" />
+                                <Button onAction="#handleExportExcel" styleClass="export-button" text="📊 Export Excel" />
+                                <Button onAction="#handleExportCSV" styleClass="export-button" text="📄 Export CSV" />
+                            </children>
+                        </HBox>
+                    </children>
+                </HBox>
+
+                <!-- Search and Filter Bar -->
+                <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="filter-bar">
+                    <children>
+                        <Label text="Search:" />
+                        <TextField fx:id="searchField" promptText="Search by name, model, serial, category..." prefWidth="250.0" />
+
+                        <Label text="Status:" />
+                        <ComboBox fx:id="statusFilterComboBox" prefWidth="120.0" />
+
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="clearButton" onAction="#handleClear" styleClass="clear-button" text="Clear Form" />
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </VBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.35" BorderPane.alignment="CENTER">
+            <items>
+                <!-- Equipment Form -->
+                <VBox styleClass="form-container" spacing="15.0">
+                    <children>
+                        <Label styleClass="form-title" text="Equipment Details" />
+
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                            <content>
+                                <VBox spacing="15.0">
+                                    <children>
+                                        <VBox spacing="5.0">
+                                            <children>
+                                                <Label text="Equipment Name *" styleClass="field-label" />
+                                                <TextField fx:id="nameField" promptText="Enter equipment name" />
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="5.0">
+                                            <children>
+                                                <Label text="Model" styleClass="field-label" />
+                                                <TextField fx:id="modelField" promptText="Enter model number" />
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="5.0">
+                                            <children>
+                                                <Label text="Serial Number *" styleClass="field-label" />
+                                                <TextField fx:id="serialNumberField" promptText="Enter unique serial number" />
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="5.0">
+                                            <children>
+                                                <Label text="Purchase Date" styleClass="field-label" />
+                                                <DatePicker fx:id="purchaseDatePicker" maxWidth="1.7976931348623157E308" />
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="5.0">
+                                            <children>
+                                                <Label text="Status" styleClass="field-label" />
+                                                <ComboBox fx:id="statusComboBox" maxWidth="1.7976931348623157E308" />
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="5.0">
+                                            <children>
+                                                <Label text="Category" styleClass="field-label" />
+                                                <TextField fx:id="categoryField" promptText="e.g., Computer, Printer, Projector" />
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="5.0">
+                                            <children>
+                                                <Label text="Brand" styleClass="field-label" />
+                                                <TextField fx:id="brandField" promptText="Enter brand name" />
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="5.0">
+                                            <children>
+                                                <Label text="Description" styleClass="field-label" />
+                                                <TextArea fx:id="descriptionArea" maxHeight="80.0" prefHeight="80.0" promptText="Enter equipment description" />
+                                            </children>
+                                        </VBox>
+
+                                        <!-- Action Buttons -->
+                                        <VBox spacing="10.0">
+                                            <children>
+                                                <Button fx:id="addButton" maxWidth="1.7976931348623157E308" onAction="#handleAdd" styleClass="primary-button" text="Add Equipment" />
+                                                <Button fx:id="updateButton" maxWidth="1.7976931348623157E308" onAction="#handleUpdate" styleClass="update-button" text="Update Equipment" />
+                                                <Button fx:id="deleteButton" maxWidth="1.7976931348623157E308" onAction="#handleDelete" styleClass="delete-button" text="Delete Equipment" />
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </ScrollPane>
+                    </children>
+                    <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                    </padding>
+                </VBox>
+
+                <!-- Equipment Table -->
+                <VBox styleClass="table-container" spacing="10.0">
+                    <children>
+                        <Label styleClass="table-title" text="Equipment List" />
+
+                        <TableView fx:id="equipmentTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="idColumn" prefWidth="60.0" text="ID" />
+                                <TableColumn fx:id="nameColumn" prefWidth="120.0" text="Name" />
+                                <TableColumn fx:id="modelColumn" prefWidth="100.0" text="Model" />
+                                <TableColumn fx:id="serialColumn" prefWidth="120.0" text="Serial Number" />
+                                <TableColumn fx:id="purchaseDateColumn" prefWidth="100.0" text="Purchase Date" />
+                                <TableColumn fx:id="statusColumn" prefWidth="90.0" text="Status" />
+                                <TableColumn fx:id="categoryColumn" prefWidth="100.0" text="Category" />
+                                <TableColumn fx:id="brandColumn" prefWidth="80.0" text="Brand" />
+                            </columns>
+                        </TableView>
+                    </children>
+                    <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                    </padding>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>
