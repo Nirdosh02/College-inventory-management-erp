@@ -2,8 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-config.properties
-*.env
+
 
 
 ### IntelliJ IDEA ###

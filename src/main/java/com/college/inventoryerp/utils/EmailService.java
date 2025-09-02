@@ -13,7 +13,7 @@ public class EmailService {
     private static final String SMTP_HOST = ConfigLoader.get("smtp.host");
     private static final String SMTP_PORT = ConfigLoader.get("smtp.port");
     private static final String EMAIL_USERNAME = ConfigLoader.get("email.username");
-    private static final String EMAIL_PASSWORD = System.getenv("EMAIL_PASSWORD");
+    private static final String EMAIL_PASSWORD = ConfigLoader.get("email.password");
     private static final String FROM_EMAIL = ConfigLoader.get("email.from");
     private static final String FROM_NAME = ConfigLoader.get("email.fromName");
 
