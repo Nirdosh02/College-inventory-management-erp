@@ -3,6 +3,7 @@ package com.example.collegeinventoryerp.model;
 //package com.college.inventory.model;
 
 import javafx.beans.property.*;
+
 import java.time.LocalDate;
 
 public class IssueRecord {
@@ -14,18 +15,29 @@ public class IssueRecord {
     private final ObjectProperty<LocalDate> returnDate;
     private final StringProperty status;
     private final StringProperty notes;
+    private final IntegerProperty quantity;
+    private final IntegerProperty availableQty;
+    private int quantityIssued;
+
+    public int getQuantityIssued() { return quantityIssued; }
+    public int issuedQuantityProperty(){ return quantityIssued; }
+    public void setQuantityIssued(int quantityIssued) { this.quantityIssued = quantityIssued; }
+
+
 
     // Display properties (for UI)
     private final StringProperty equipmentName;
     private final StringProperty facultyName;
     private final StringProperty employeeName;
 
-    public IssueRecord() {
-        this(0, 0, 0, 0, null, null, "issued", "", "", "", "");
+    public IssueRecord(IntegerProperty quantity) {
+        this(0, 0, 0, 0, null, null, "issued", "", quantity, 0, "", "", "");
     }
 
+
+
     public IssueRecord(int recordId, int equipmentId, int facultyId, int employeeId,
-                       LocalDate issueDate, LocalDate returnDate, String status, String notes,
+                       LocalDate issueDate, LocalDate returnDate, String status, String notes, IntegerProperty quantity,int availableQty,
                        String equipmentName, String facultyName, String employeeName) {
         this.recordId = new SimpleIntegerProperty(recordId);
         this.equipmentId = new SimpleIntegerProperty(equipmentId);
@@ -35,6 +47,8 @@ public class IssueRecord {
         this.returnDate = new SimpleObjectProperty<>(returnDate);
         this.status = new SimpleStringProperty(status);
         this.notes = new SimpleStringProperty(notes);
+        this.quantity = quantity;
+        this.availableQty = new SimpleIntegerProperty(availableQty);
         this.equipmentName = new SimpleStringProperty(equipmentName);
         this.facultyName = new SimpleStringProperty(facultyName);
         this.employeeName = new SimpleStringProperty(employeeName);
@@ -95,6 +109,16 @@ public class IssueRecord {
     public String getEmployeeName() { return employeeName.get(); }
     public void setEmployeeName(String employeeName) { this.employeeName.set(employeeName); }
 
+    // Quantity Property
+    public IntegerProperty quantityProperty() {return quantity;}
+    public int getQuantity() {return quantity.get();}
+    public void setQuantity(int quantity) {this.quantity.set(quantity);}
+
+    // Available quantity property
+    public IntegerProperty availableQuantityProperty(){ return availableQty;}
+    public int getAvailableQty(){ return availableQty.get();}
+    public void setAvailableQty(int availableQty){ this.availableQty.set(availableQty);}
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -107,5 +131,14 @@ public class IssueRecord {
     public int hashCode() {
         return Integer.hashCode(getRecordId());
     }
+
+    public String getDsrNumber() {
+        Equipment equipment = new Equipment();
+       return equipment.getDsrNumber();
+    }
+
+
+//    public int getQuantity() { return quantity;
+//    }
 }
 

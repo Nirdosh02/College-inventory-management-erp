@@ -55,7 +55,7 @@ public class ReportGenerator {
                     );
                     row.createCell(5).setCellValue(eq.getStatus());
                     row.createCell(6).setCellValue(eq.getCategory());
-                    row.createCell(7).setCellValue(eq.getBrand());
+//                    row.createCell(7).setCellValue(eq.getBrand());
                     row.createCell(8).setCellValue(eq.getDescription());
                 }
 
@@ -162,7 +162,7 @@ public class ReportGenerator {
                             eq.getPurchaseDate() != null ? eq.getPurchaseDate().format(DATE_FORMATTER) : "",
                             eq.getStatus(),
                             eq.getCategory(),
-                            eq.getBrand(),
+//                            eq.getBrand(),
                             eq.getDescription()
                     );
                 }

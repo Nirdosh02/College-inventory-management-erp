@@ -33,12 +33,13 @@ public class App extends Application {
         // Configure stage
         stage.setTitle("College Inventory Management System");
         stage.setScene(scene);
-        stage.setMinWidth(1200);
-        stage.setMinHeight(800);
+        stage.setMaximized(true);
+//        stage.setMinWidth(1200);
+//        stage.setMinHeight(800);
 
         // Set application icon
         try {
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon.png")));
         } catch (Exception e) {
             System.out.println("Application icon not found, using default.");
         }

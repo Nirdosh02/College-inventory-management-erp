@@ -33,8 +33,10 @@ public class EquipmentDAO {
                         rs.getDate("purchase_date") != null ? rs.getDate("purchase_date").toLocalDate() : null,
                         rs.getString("status"),
                         rs.getString("category"),
-                        rs.getString("brand"),
-                        rs.getString("description")
+                        rs.getString("description"),
+                        rs.getInt("quantity"),
+                        rs.getInt("issued_quantity"),
+                        rs.getString("dsr_number")
                 );
                 equipmentList.add(equipment);
             }
@@ -47,7 +49,7 @@ public class EquipmentDAO {
 
     public ObservableList<Equipment> getAvailableEquipment() {
         ObservableList<Equipment> equipmentList = FXCollections.observableArrayList();
-        String query = "SELECT * FROM equipment WHERE status = 'available' ORDER BY name";
+        String query = "SELECT * FROM equipment WHERE (quantity - COALESCE(issued_quantity, 0)) > 0 ORDER BY name";
 
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
@@ -62,8 +64,10 @@ public class EquipmentDAO {
                         rs.getDate("purchase_date") != null ? rs.getDate("purchase_date").toLocalDate() : null,
                         rs.getString("status"),
                         rs.getString("category"),
-                        rs.getString("brand"),
-                        rs.getString("description")
+                        rs.getString("description"),
+                        rs.getInt("quantity"),
+                        rs.getInt("issued_quantity"),
+                        rs.getString("dsr_number")
                 );
                 equipmentList.add(equipment);
             }
@@ -75,7 +79,7 @@ public class EquipmentDAO {
     }
 
     public boolean addEquipment(Equipment equipment) {
-        String query = "INSERT INTO equipment (name, model, serial_number, purchase_date, status, category, brand, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO equipment (name, model, serial_number, purchase_date, status, category, description, quantity, dsr_number, issued_quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -86,8 +90,10 @@ public class EquipmentDAO {
             pstmt.setDate(4, equipment.getPurchaseDate() != null ? Date.valueOf(equipment.getPurchaseDate()) : null);
             pstmt.setString(5, equipment.getStatus());
             pstmt.setString(6, equipment.getCategory());
-            pstmt.setString(7, equipment.getBrand());
-            pstmt.setString(8, equipment.getDescription());
+            pstmt.setString(7, equipment.getDescription());
+            pstmt.setInt(8, equipment.getQuantity());
+            pstmt.setString(9, equipment.getDsrNumber());
+            pstmt.setInt(10, 0);
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -98,7 +104,7 @@ public class EquipmentDAO {
     }
 
     public boolean updateEquipment(Equipment equipment) {
-        String query = "UPDATE equipment SET name = ?, model = ?, serial_number = ?, purchase_date = ?, status = ?, category = ?, brand = ?, description = ? WHERE equipment_id = ?";
+        String query = "UPDATE equipment SET name = ?, model = ?, serial_number = ?, purchase_date = ?, status = ?, category = ?, description = ?, quantity = ?, dsr_number = ?, issued_quantity = ? WHERE equipment_id = ?";
 
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -109,9 +115,12 @@ public class EquipmentDAO {
             pstmt.setDate(4, equipment.getPurchaseDate() != null ? Date.valueOf(equipment.getPurchaseDate()) : null);
             pstmt.setString(5, equipment.getStatus());
             pstmt.setString(6, equipment.getCategory());
-            pstmt.setString(7, equipment.getBrand());
-            pstmt.setString(8, equipment.getDescription());
-            pstmt.setInt(9, equipment.getEquipmentId());
+            pstmt.setString(7, equipment.getDescription());
+            pstmt.setInt(8, equipment.getQuantity());
+            pstmt.setString(9, equipment.getDsrNumber());
+            pstmt.setInt(10, equipment.getIssuedQuantity());
+            pstmt.setInt(11, equipment.getEquipmentId());
+
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -120,6 +129,25 @@ public class EquipmentDAO {
             return false;
         }
     }
+    public boolean issueEquipment(int equipmentId, int issueCount) {
+        String query = "UPDATE equipment SET quantity = quantity - ?, issued_quantity = issued_quantity + ? WHERE equipment_id = ? AND quantity >= ?";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, issueCount);
+            pstmt.setInt(2, issueCount);
+            pstmt.setInt(3, equipmentId);
+            pstmt.setInt(4, issueCount); // ensure we don’t issue more than available
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error issuing equipment: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public boolean deleteEquipment(int equipmentId) {
         String query = "DELETE FROM equipment WHERE equipment_id = ?";
@@ -164,22 +192,32 @@ public class EquipmentDAO {
 //        }
 //        return null;
 //    }
-        public Equipment getEquipmentById(Connection conn, int equipmentId) throws SQLException {
-            String query = "SELECT * FROM equipment WHERE equipment_id = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setInt(1, equipmentId);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        Equipment eq = new Equipment();
-                        eq.setEquipmentId(rs.getInt("equipment_id"));
-                        eq.setName(rs.getString("name"));
-                        eq.setStatus(rs.getString("status"));
-                        return eq;
-                    }
+    public Equipment getEquipmentById(Connection conn, int equipmentId) {
+        String query = "SELECT * FROM equipment WHERE equipment_id = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, equipmentId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Equipment(
+                            rs.getInt("equipment_id"),
+                            rs.getString("name"),
+                            rs.getString("model"),
+                            rs.getString("serial_number"),
+                            rs.getDate("purchase_date") != null ? rs.getDate("purchase_date").toLocalDate() : null,
+                            rs.getString("status"),
+                            rs.getString("category"),
+                            rs.getString("description"),
+                            rs.getInt("quantity"),
+                            rs.getInt("issued_quantity"), // Include this
+                            rs.getString("dsr_number")
+                    );
                 }
             }
-            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return null;
+    }
 
 
 //    public boolean updateEquipmentStatus(int equipmentId, String status) {
@@ -223,6 +261,28 @@ public class EquipmentDAO {
             System.err.println("Error checking serial number existence: " + e.getMessage());
             e.printStackTrace();
         }
+        return false;
+    }
+
+    public boolean isDsrNumberExists(String dsrNumber, int excludeId) {
+        String sql = "SELECT COUNT(*) FROM Equipment WHERE dsr_number = ?";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, dsrNumber);
+            pstmt.setInt(2, excludeId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error checking DSR number existence: " + e.getMessage());
+        }
+
         return false;
     }
 }

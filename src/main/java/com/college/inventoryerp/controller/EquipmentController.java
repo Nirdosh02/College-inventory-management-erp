@@ -18,6 +18,8 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
+import static com.example.collegeinventoryerp.utils.ValidationUtils.showError;
+
 public class EquipmentController implements Initializable {
 
     // Table and columns
@@ -29,7 +31,8 @@ public class EquipmentController implements Initializable {
     @FXML private TableColumn<Equipment, LocalDate> purchaseDateColumn;
     @FXML private TableColumn<Equipment, String> statusColumn;
     @FXML private TableColumn<Equipment, String> categoryColumn;
-    @FXML private TableColumn<Equipment, String> brandColumn;
+    @FXML private  TableColumn<Equipment, Integer> quantityColumn;
+    @FXML private TableColumn<Equipment, String> dsrNumberColumn;
 
     // Form controls
     @FXML private TextField nameField;
@@ -38,7 +41,8 @@ public class EquipmentController implements Initializable {
     @FXML private DatePicker purchaseDatePicker;
     @FXML private ComboBox<String> statusComboBox;
     @FXML private TextField categoryField;
-    @FXML private TextField brandField;
+    @FXML private Spinner<Integer> quantityField;
+    @FXML private TextField dsrNumberField;
     @FXML private TextArea descriptionArea;
 
     // Buttons
@@ -79,7 +83,8 @@ public class EquipmentController implements Initializable {
         purchaseDateColumn.setCellValueFactory(new PropertyValueFactory<>("purchaseDate"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-        brandColumn.setCellValueFactory(new PropertyValueFactory<>("brand"));
+        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        dsrNumberColumn.setCellValueFactory(new PropertyValueFactory<>("dsrNumber"));
 
         // Style status column based on status
         statusColumn.setCellFactory(column -> new TableCell<Equipment, String>() {
@@ -136,6 +141,10 @@ public class EquipmentController implements Initializable {
         ));
         statusComboBox.setValue("available");
 
+        if (quantityField != null) {
+            quantityField.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 1));
+        }
+
         // Add listeners to form fields for validation
         nameField.textProperty().addListener((obs, oldText, newText) -> {
             if (!ValidationUtils.isNotEmpty(newText)) {
@@ -160,7 +169,7 @@ public class EquipmentController implements Initializable {
 
         // Setup status filter
         statusFilterComboBox.setItems(FXCollections.observableArrayList(
-                "All", "available", "issued", "maintenance", "retired"
+                "All", "available", "issued", "maintenance", "not available"
         ));
         statusFilterComboBox.setValue("All");
 
@@ -189,8 +198,8 @@ public class EquipmentController implements Initializable {
             return equipment.getName().toLowerCase().contains(lowerCaseFilter) ||
                     equipment.getModel().toLowerCase().contains(lowerCaseFilter) ||
                     equipment.getSerialNumber().toLowerCase().contains(lowerCaseFilter) ||
-                    equipment.getCategory().toLowerCase().contains(lowerCaseFilter) ||
-                    equipment.getBrand().toLowerCase().contains(lowerCaseFilter);
+                    equipment.getCategory().toLowerCase().contains(lowerCaseFilter);
+//                    equipment.getBrand().toLowerCase().contains(lowerCaseFilter);
         });
     }
 
@@ -199,7 +208,7 @@ public class EquipmentController implements Initializable {
             equipmentList.clear();
             equipmentList.addAll(equipmentDAO.getAllEquipment());
         } catch (Exception e) {
-            ValidationUtils.showError("Error loading equipment data: " + e.getMessage());
+            showError("Error loading equipment data: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -211,7 +220,9 @@ public class EquipmentController implements Initializable {
         purchaseDatePicker.setValue(equipment.getPurchaseDate());
         statusComboBox.setValue(equipment.getStatus());
         categoryField.setText(equipment.getCategory());
-        brandField.setText(equipment.getBrand());
+        if (quantityField != null) quantityField.getValueFactory().setValue(equipment.getQuantity());
+        dsrNumberField.setText(equipment.getDsrNumber());
+
         descriptionArea.setText(equipment.getDescription());
     }
 
@@ -231,8 +242,14 @@ public class EquipmentController implements Initializable {
         int excludeId = selectedEquipment != null ? selectedEquipment.getEquipmentId() : -1;
         if (equipmentDAO.isSerialNumberExists(serialNumber, excludeId)) {
             ValidationUtils.highlightError(serialNumberField);
-            ValidationUtils.showError("Serial number already exists. Please use a different serial number.");
+            showError("Serial number already exists. Please use a different serial number.");
             isValid = false;
+        }
+        if (selectedEquipment == null) {
+            if (equipmentDAO.isDsrNumberExists(dsrNumberField.getText(), 0)) {
+                showError("DSR number already exists. Please use a different DSR number.");
+                return false;
+            }
         }
 
         return isValid;
@@ -251,7 +268,8 @@ public class EquipmentController implements Initializable {
         equipment.setPurchaseDate(purchaseDatePicker.getValue());
         equipment.setStatus(statusComboBox.getValue());
         equipment.setCategory(categoryField.getText());
-        equipment.setBrand(brandField.getText());
+        equipment.setQuantity(quantityField.getValueFactory().getValue());
+        equipment.setDsrNumber(dsrNumberField.getText());
         equipment.setDescription(descriptionArea.getText());
 
         if (equipmentDAO.addEquipment(equipment)) {
@@ -259,14 +277,14 @@ public class EquipmentController implements Initializable {
             loadEquipmentData();
             clearForm();
         } else {
-            ValidationUtils.showError("Failed to add equipment. Please try again.");
+            showError("Failed to add equipment. Please try again.");
         }
     }
 
     @FXML
     private void handleUpdate() {
         if (selectedEquipment == null) {
-            ValidationUtils.showError("Please select an equipment to update.");
+            showError("Please select an equipment to update.");
             return;
         }
 
@@ -280,21 +298,22 @@ public class EquipmentController implements Initializable {
         selectedEquipment.setPurchaseDate(purchaseDatePicker.getValue());
         selectedEquipment.setStatus(statusComboBox.getValue());
         selectedEquipment.setCategory(categoryField.getText());
-        selectedEquipment.setBrand(brandField.getText());
+        selectedEquipment.setQuantity(quantityField.getValueFactory().getValue());
+        selectedEquipment.setDsrNumber(dsrNumberField.getText());
         selectedEquipment.setDescription(descriptionArea.getText());
 
         if (equipmentDAO.updateEquipment(selectedEquipment)) {
             ValidationUtils.showSuccess("Equipment updated successfully!");
             loadEquipmentData();
         } else {
-            ValidationUtils.showError("Failed to update equipment. Please try again.");
+            showError("Failed to update equipment. Please try again.");
         }
     }
 
     @FXML
     private void handleDelete() {
         if (selectedEquipment == null) {
-            ValidationUtils.showError("Please select an equipment to delete.");
+            showError("Please select an equipment to delete.");
             return;
         }
 
@@ -309,7 +328,7 @@ public class EquipmentController implements Initializable {
                 loadEquipmentData();
                 clearForm();
             } else {
-                ValidationUtils.showError("Failed to delete equipment. It may be currently issued or referenced by other records.");
+                showError("Failed to delete equipment. It may be currently issued or referenced by other records.");
             }
         }
     }
@@ -347,7 +366,7 @@ public class EquipmentController implements Initializable {
         purchaseDatePicker.setValue(null);
         statusComboBox.setValue("available");
         categoryField.clear();
-        brandField.clear();
+//        brandField.clear();
         descriptionArea.clear();
 
         // Clear error highlighting

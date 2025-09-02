@@ -139,5 +139,54 @@ public class FacultyDAO {
         }
         return false;
     }
+
+    public ObservableList<String> getAllDepartments() {
+        ObservableList<String> departments = FXCollections.observableArrayList();
+        String query = "SELECT DISTINCT department FROM faculty WHERE department IS NOT NULL AND department != '' ORDER BY department";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                String department = rs.getString("department");
+                if (department != null && !department.trim().isEmpty()) {
+                    departments.add(department.trim());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching departments: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return departments;
+    }
+
+    public ObservableList<Faculty> getFacultyByDepartment(String department) {
+        ObservableList<Faculty> facultyList = FXCollections.observableArrayList();
+        String query = "SELECT * FROM faculty WHERE department = ? ORDER BY name";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, department);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Faculty faculty = new Faculty(
+                        rs.getInt("faculty_id"),
+                        rs.getString("name"),
+                        rs.getString("department"),
+                        rs.getString("email"),
+                        rs.getString("phone")
+                );
+                facultyList.add(faculty);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching faculty by department: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return facultyList;
+    }
+
 }
 
