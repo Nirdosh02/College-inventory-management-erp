@@ -4,33 +4,45 @@ package com.college.inventoryerp.dao;
 
 import java.sql.*;
 import java.util.Properties;
+import java.io.InputStream;
 
 public class DatabaseConnection {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/college_inventory_db";
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "root"; // Change this to your MySQL password
-    private static final String DB_DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static String DB_URL;
+    private static String DB_USERNAME;
+    private static String DB_PASSWORD;
+    private static String DB_DRIVER;
 
     private static volatile DatabaseConnection instance;
     private Connection connection;
 
     private DatabaseConnection() {
         try {
-            Class.forName(DB_DRIVER);
-            Properties props = new Properties();
-            props.setProperty("user", DB_USERNAME);
-            props.setProperty("password", DB_PASSWORD);
-            props.setProperty("useSSL", "false");
-            props.setProperty("serverTimezone", "UTC");
-            props.setProperty("allowPublicKeyRetrieval", "true");
+            Properties properties = new Properties();
+            try(InputStream input = DatabaseConnection.class.getClassLoader().getResourceAsStream("config.properties");
+            ){
+                if(input == null){
+                    throw new RuntimeException("config.properties file not found in resources folder");
+                }
+                properties.load(input);
+            }
+            DB_URL = properties.getProperty("db.url");
+            DB_USERNAME = properties.getProperty("db.username");
+            DB_PASSWORD = properties.getProperty("db.password");
+            DB_DRIVER = properties.getProperty("db.driver");
 
-            this.connection = DriverManager.getConnection(DB_URL, props);
+            Class.forName(DB_DRIVER);
+
+
+            this.connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
             System.out.println("Database connection established successfully!");
         } catch (ClassNotFoundException e) {
             System.err.println("MySQL JDBC Driver not found!");
             e.printStackTrace();
         } catch (SQLException e) {
             System.err.println("Failed to create database connection!");
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("❌ Failed to load database configuration!");
             e.printStackTrace();
         }
     }
