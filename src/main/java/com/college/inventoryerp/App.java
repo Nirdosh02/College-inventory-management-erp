@@ -1,8 +1,8 @@
-package com.example.collegeinventoryerp;
+package com.college.inventoryerp;
 
 //package com.college.inventory;
 
-import com.example.collegeinventoryerp.dao.DatabaseConnection;
+import com.college.inventoryerp.dao.DatabaseConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

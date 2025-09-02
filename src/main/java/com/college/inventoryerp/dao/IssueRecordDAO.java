@@ -1,9 +1,9 @@
-package com.example.collegeinventoryerp.dao;
+package com.college.inventoryerp.dao;
 
 //package com.college.inventory.dao;
 
-import com.example.collegeinventoryerp.model.Equipment;
-import com.example.collegeinventoryerp.model.IssueRecord;
+import com.college.inventoryerp.model.Equipment;
+import com.college.inventoryerp.model.IssueRecord;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

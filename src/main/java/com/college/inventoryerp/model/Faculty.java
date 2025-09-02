@@ -1,4 +1,4 @@
-package com.example.collegeinventoryerp.model;
+package com.college.inventoryerp.model;
 
 //package com.college.inventory.model;
 

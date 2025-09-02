@@ -1,13 +1,12 @@
-package com.example.collegeinventoryerp.dao;
+package com.college.inventoryerp.dao;
 
 //package com.college.inventory.dao;
 
-import com.example.collegeinventoryerp.model.Equipment;
+import com.college.inventoryerp.model.Equipment;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
-import java.time.LocalDate;
 
 public class EquipmentDAO {
     private final DatabaseConnection dbConnection;

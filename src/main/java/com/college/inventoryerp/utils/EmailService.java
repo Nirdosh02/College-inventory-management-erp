@@ -1,6 +1,6 @@
-package com.example.collegeinventoryerp.utils;
+package com.college.inventoryerp.utils;
 
-import com.example.collegeinventoryerp.model.IssueRecord;
+import com.college.inventoryerp.model.IssueRecord;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;

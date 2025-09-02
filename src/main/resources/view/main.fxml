@@ -5,11 +5,12 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.collegeinventoryerp.controller.MainController">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.college.inventoryerp.controller.MainController">
     <top>
         <VBox styleClass="header-section" BorderPane.alignment="CENTER">
             <children>
-                <Label fx:id="dashboardTitle" styleClass="main-title" text="College Inventory Management System" textAlignment="CENTER">
+                <Label fx:id="dashboardTitle" styleClass="main-title" text="College Inventory ERP" textAlignment="CENTER">
                     <font>
                         <Font name="Arial Bold" size="24.0" />
                     </font>
@@ -21,16 +22,31 @@
             </padding>
         </VBox>
     </top>
+
     <center>
         <TabPane fx:id="mainTabPane" styleClass="main-tab-pane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
+                <!-- Dashboard tab -->
                 <Tab styleClass="dashboard-tab" text="Dashboard">
                     <content>
                         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
                             <content>
                                 <VBox spacing="20.0">
                                     <children>
-                                        <!-- Summary Cards -->
+                                        <!-- Equipment Filter Section (MOVED OUTSIDE GridPane) -->
+                                        <HBox spacing="15.0" alignment="CENTER_LEFT" styleClass="filter-section">
+                                            <children>
+                                                <Label text="Select Equipment:" styleClass="filter-label" />
+                                                <ComboBox fx:id="equipmentFilterCombo" prefWidth="220.0" />
+                                                <Region HBox.hgrow="ALWAYS"/>
+                                                <Button fx:id="refreshEquipmentButton" text="🔄 Refresh" onAction="#handleRefreshEquipment" styleClass="refresh-button"/>
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
+                                            </padding>
+                                        </HBox>
+
+                                        <!-- Summary Cards Grid -->
                                         <GridPane hgap="20.0" vgap="15.0" styleClass="summary-grid">
                                             <columnConstraints>
                                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -38,112 +54,33 @@
                                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                             </columnConstraints>
-                                            <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                            </rowConstraints>
                                             <children>
-                                                <VBox styleClass="summary-card, equipment-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                                <VBox styleClass="summary-card, equipment-card" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">
                                                     <children>
                                                         <Label styleClass="card-title" text="Total Equipment" />
-                                                        <Label fx:id="totalEquipmentLabel" styleClass="card-value" text="0" />
+                                                        <Label fx:id="totalEquipmentSummary" styleClass="card-value" text="0" />
                                                     </children>
                                                 </VBox>
-                                                <VBox styleClass="summary-card, available-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                                <VBox styleClass="summary-card, available-card" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">
                                                     <children>
                                                         <Label styleClass="card-title" text="Available" />
-                                                        <Label fx:id="availableEquipmentLabel" styleClass="card-value" text="0" />
+                                                        <Label fx:id="availableEquipmentSummary" styleClass="card-value" text="0" />
                                                     </children>
                                                 </VBox>
-                                                <VBox styleClass="summary-card, issued-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                                <VBox styleClass="summary-card, issued-card" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">
                                                     <children>
                                                         <Label styleClass="card-title" text="Currently Issued" />
-                                                        <Label fx:id="issuedEquipmentLabel" styleClass="card-value" text="0" />
+                                                        <Label fx:id="issuedEquipmentSummary" styleClass="card-value" text="0" />
                                                     </children>
                                                 </VBox>
-                                                <VBox styleClass="summary-card, people-card" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                                                <VBox styleClass="summary-card, maintenance-card" GridPane.columnIndex="3" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">
                                                     <children>
-                                                        <Label styleClass="card-title" text="Faculty Members" />
-                                                        <Label fx:id="totalFacultyLabel" styleClass="card-value" text="0" />
-                                                    </children>
-                                                </VBox>
-<!--                                                <VBox styleClass="summary-card, people-card" GridPane.columnIndex="0" GridPane.rowIndex="1">-->
-<!--                                                    <children>-->
-<!--                                                        <Label styleClass="card-title" text="Employees" />-->
-<!--                                                        <Label fx:id="totalEmployeesLabel" styleClass="card-value" text="0" />-->
-<!--                                                    </children>-->
-<!--                                                </VBox>-->
-                                            </children>
-                                        </GridPane>
-
-                                        <!-- Issue/Return Section -->
-                                        <HBox spacing="20.0">
-                                            <children>
-                                                <!-- Issue Equipment Form -->
-                                                <VBox styleClass="form-section" spacing="15.0" HBox.hgrow="ALWAYS">
-                                                    <children>
-                                                        <Label styleClass="section-title" text="Issue Equipment" />
-                                                        <GridPane hgap="10.0" vgap="10.0">
-                                                            <columnConstraints>
-                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
-                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
-                                                            </columnConstraints>
-                                                            <rowConstraints>
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
-                                                            </rowConstraints>
-                                                            <children>
-                                                                <Label text="Equipment:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                                                <ComboBox fx:id="equipmentComboBox" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
-                                                                <Label text="Faculty:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                                                <ComboBox fx:id="facultyComboBox" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-                                                                <Label text="Issued By:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                                                <ComboBox fx:id="employeeComboBox" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-                                                                <Label text="Issue Date:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                                                <DatePicker fx:id="issueDatePicker" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
-                                                                <Label text="Notes:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                                                                <TextArea fx:id="notesTextArea" maxHeight="60.0" prefHeight="60.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                                            </children>
-                                                        </GridPane>
-
-                                                        <HBox spacing="10.0">
-                                                            <children>
-                                                                <Button fx:id="issueButton" onAction="#handleIssueEquipment" styleClass="primary-button" text="Issue Equipment" />
-                                                                <Button onAction="#handleRefresh" styleClass="secondary-button" text="Refresh Data" />
-                                                            </children>
-                                                        </HBox>
-                                                    </children>
-                                                </VBox>
-
-                                                <!-- Currently Issued Equipment -->
-                                                <VBox styleClass="table-section" spacing="15.0" HBox.hgrow="ALWAYS">
-                                                    <children>
-                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                            <children>
-                                                                <Label styleClass="section-title" text="Currently Issued Equipment" />
-                                                                <Button fx:id="returnButton" onAction="#handleReturnEquipment" styleClass="return-button" text="Return Selected" />
-                                                            </children>
-                                                        </HBox>
-
-                                                        <TableView fx:id="currentIssuesTable" prefHeight="300.0">
-                                                            <columns>
-                                                                <TableColumn fx:id="currentEquipmentColumn" prefWidth="120.0" text="Equipment" />
-                                                                <TableColumn fx:id="currentFacultyColumn" prefWidth="120.0" text="Faculty" />
-                                                                <TableColumn fx:id="currentEmployeeColumn" prefWidth="100.0" text="Issued By" />
-                                                                <TableColumn fx:id="currentIssueDateColumn" prefWidth="90.0" text="Issue Date" />
-                                                            </columns>
-                                                        </TableView>
+                                                        <Label styleClass="card-title" text="In Maintenance" />
+                                                        <Label fx:id="maintenanceEquipmentSummary" styleClass="card-value" text="0" />
                                                     </children>
                                                 </VBox>
                                             </children>
-                                        </HBox>
+                                        </GridPane>
                                     </children>
                                     <padding>
                                         <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
@@ -154,6 +91,14 @@
                     </content>
                 </Tab>
 
+                <!-- NEW: Issue / Return tab (included FXML and its own controller) -->
+                <Tab styleClass="issue-tab" text="Issue/Return">
+                    <content>
+                        <fx:include source="IssueEquipment.fxml" />
+                    </content>
+                </Tab>
+
+                <!-- Management tabs -->
                 <Tab styleClass="equipment-tab" text="Equipment Management">
                     <content>
                         <fx:include source="equipment.fxml" />

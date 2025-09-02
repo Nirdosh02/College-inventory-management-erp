@@ -1,4 +1,4 @@
-package com.example.collegeinventoryerp.model;
+package com.college.inventoryerp.model;
 
 import javafx.beans.property.*;
 import java.time.LocalDate;
@@ -131,6 +131,15 @@ public class Equipment {
 
     public int getAvailableQuantity() {
         return getQuantity() - getIssuedQuantity();
+    }
+
+    public int getMaintenance(){
+        if(getIssuedQuantity() == 0){
+            return 0;
+        }
+        else{
+            return getQuantity()-getAvailableQuantity()-getIssuedQuantity();
+        }
     }
 
     @Override

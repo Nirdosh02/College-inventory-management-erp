@@ -51,6 +51,11 @@
             <artifactId>poi-ooxml</artifactId>
             <version>5.2.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
 
         <!-- JUnit for Testing -->
         <dependency>
@@ -78,7 +83,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>${javafx.maven.plugin.version}</version>
                 <configuration>
-                    <mainClass>com.example.collegeinventoryerp.App</mainClass>
+                    <mainClass>com.college.inventoryerp.App</mainClass>
                 </configuration>
             </plugin>
         </plugins>

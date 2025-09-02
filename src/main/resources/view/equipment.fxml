@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.collegeinventoryerp.controller.EquipmentController">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.college.inventoryerp.controller.EquipmentController">
     <top>
         <VBox styleClass="page-header" BorderPane.alignment="CENTER">
             <children>
@@ -95,13 +95,15 @@
                                                 <TextField fx:id="categoryField" promptText="e.g., Computer, Printer, Projector" />
                                             </children>
                                         </VBox>
-
                                         <VBox spacing="5.0">
                                             <children>
-                                                <Label text="Brand" styleClass="field-label" />
-                                                <TextField fx:id="brandField" promptText="Enter brand name" />
+                                                <Label text="DSR Number" styleClass="field-label" />
+                                                <TextField fx:id="dsrNumberField" promptText="Enter brand name" />
                                             </children>
                                         </VBox>
+
+                                        <Label text="Quantity:" GridPane.rowIndex="6" />
+                                        <Spinner fx:id="quantityField" editable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
 
                                         <VBox spacing="5.0">
                                             <children>
@@ -138,14 +140,15 @@
 
                         <TableView fx:id="equipmentTable" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="idColumn" prefWidth="60.0" text="ID" />
-                                <TableColumn fx:id="nameColumn" prefWidth="120.0" text="Name" />
-                                <TableColumn fx:id="modelColumn" prefWidth="100.0" text="Model" />
-                                <TableColumn fx:id="serialColumn" prefWidth="120.0" text="Serial Number" />
-                                <TableColumn fx:id="purchaseDateColumn" prefWidth="100.0" text="Purchase Date" />
-                                <TableColumn fx:id="statusColumn" prefWidth="90.0" text="Status" />
-                                <TableColumn fx:id="categoryColumn" prefWidth="100.0" text="Category" />
-                                <TableColumn fx:id="brandColumn" prefWidth="80.0" text="Brand" />
+                                <TableColumn fx:id="idColumn" text="ID" prefWidth="50" />
+                                <TableColumn fx:id="nameColumn" text="Name" prefWidth="150" />
+                                <TableColumn fx:id="modelColumn" text="Model" prefWidth="120" />
+                                <TableColumn fx:id="serialColumn" text="Serial Number" prefWidth="150" />
+                                <TableColumn fx:id="purchaseDateColumn" text="Purchase Date" prefWidth="120" />
+                                <TableColumn fx:id="statusColumn" text="Status" prefWidth="100" />
+                                <TableColumn fx:id="categoryColumn" text="Category" prefWidth="100" />
+                                <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="80" />
+                                <TableColumn fx:id="dsrNumberColumn" text="DSR Number" prefWidth="100" />
                             </columns>
                         </TableView>
                     </children>

@@ -1,4 +1,4 @@
-package com.example.collegeinventoryerp.dao;
+package com.college.inventoryerp.dao;
 
 //package com.college.inventory.dao;
 

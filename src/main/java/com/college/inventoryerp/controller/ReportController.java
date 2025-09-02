@@ -1,11 +1,17 @@
 
 
-package com.example.collegeinventoryerp.controller;
+package com.college.inventoryerp.controller;
 
-import com.example.collegeinventoryerp.dao.*;
-import com.example.collegeinventoryerp.model.*;
-import com.example.collegeinventoryerp.utils.ReportGenerator;
-import com.example.collegeinventoryerp.utils.ValidationUtils;
+import com.college.inventoryerp.dao.EmployeeDAO;
+import com.college.inventoryerp.dao.EquipmentDAO;
+import com.college.inventoryerp.dao.FacultyDAO;
+import com.college.inventoryerp.dao.IssueRecordDAO;
+import com.college.inventoryerp.model.Equipment;
+import com.college.inventoryerp.model.IssueRecord;
+import com.college.inventoryerp.dao.*;
+import com.college.inventoryerp.model.*;
+import com.college.inventoryerp.utils.ReportGenerator;
+import com.college.inventoryerp.utils.ValidationUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

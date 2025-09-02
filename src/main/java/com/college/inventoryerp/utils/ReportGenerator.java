@@ -1,8 +1,10 @@
-package com.example.collegeinventoryerp.utils;
+package com.college.inventoryerp.utils;
 
 //package com.college.inventory.utils;
 
-import com.example.collegeinventoryerp.model.*;
+import com.college.inventoryerp.model.Equipment;
+import com.college.inventoryerp.model.IssueRecord;
+import com.college.inventoryerp.model.*;
 import javafx.collections.ObservableList;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -12,7 +14,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public class ReportGenerator {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");

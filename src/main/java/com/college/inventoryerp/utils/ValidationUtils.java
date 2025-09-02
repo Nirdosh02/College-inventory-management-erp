@@ -1,4 +1,4 @@
-package com.example.collegeinventoryerp.utils;
+package com.college.inventoryerp.utils;
 
 //package com.college.inventory.utils;
 

@@ -1,10 +1,10 @@
-package com.example.collegeinventoryerp.controller;
+package com.college.inventoryerp.controller;
 
 //package com.college.inventory.controller;
 
-import com.example.collegeinventoryerp.dao.EmployeeDAO;
-import com.example.collegeinventoryerp.model.Employee;
-import com.example.collegeinventoryerp.utils.ValidationUtils;
+import com.college.inventoryerp.dao.EmployeeDAO;
+import com.college.inventoryerp.model.Employee;
+import com.college.inventoryerp.utils.ValidationUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;

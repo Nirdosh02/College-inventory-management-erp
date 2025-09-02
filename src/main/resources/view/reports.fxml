@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.collegeinventoryerp.controller.ReportController">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.college.inventoryerp.controller.ReportController">
     <top>
         <VBox styleClass="page-header" BorderPane.alignment="CENTER">
             <children>
@@ -21,109 +21,134 @@
             </padding>
         </VBox>
     </top>
-
     <center>
         <TabPane styleClass="report-tab-pane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
                 <!-- Summary Tab -->
                 <Tab text="Summary Dashboard">
                     <content>
-                        <VBox spacing="20.0">
-                            <children>
-                                <!-- Summary Statistics -->
-                                <GridPane hgap="20.0" vgap="15.0" styleClass="summary-grid">
-                                    <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    </columnConstraints>
-                                    <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    </rowConstraints>
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                            <content>
+                                <VBox spacing="20.0">
                                     <children>
-                                        <VBox styleClass="summary-card, equipment-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                        <!-- Summary Statistics -->
+                                        <GridPane hgap="20.0" vgap="15.0" styleClass="summary-grid">
+                                            <columnConstraints>
+                                                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                                                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                                                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                                                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints percentHeight="50" vgrow="ALWAYS"/>
+                                                <RowConstraints percentHeight="50" vgrow="ALWAYS"/>
+                                            </rowConstraints>
+<!--                                            <children>-->
+<!--                                                <VBox styleClass="summary-card, equipment-card" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">-->
+<!--                                                    <children>-->
+<!--                                                        <Label styleClass="card-title" text="Total Equipment" />-->
+<!--                                                        <Label fx:id="totalEquipmentSummary" styleClass="card-value" text="0" />-->
+<!--                                                    </children>-->
+<!--                                                </VBox>-->
+<!--                                                <VBox styleClass="summary-card, available-card" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">-->
+<!--                                                    <children>-->
+<!--                                                        <Label styleClass="card-title" text="Available" />-->
+<!--                                                        <Label fx:id="availableEquipmentSummary" styleClass="card-value" text="0" />-->
+<!--                                                    </children>-->
+<!--                                                </VBox>-->
+<!--                                                <VBox styleClass="summary-card, issued-card" GridPane.columnIndex="2" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">-->
+<!--                                                    <children>-->
+<!--                                                        <Label styleClass="card-title" text="Currently Issued" />-->
+<!--                                                        <Label fx:id="issuedEquipmentSummary" styleClass="card-value" text="0" />-->
+<!--                                                    </children>-->
+<!--                                                </VBox>-->
+<!--                                                <VBox styleClass="summary-card, maintenance-card" GridPane.columnIndex="3" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">-->
+<!--                                                    <children>-->
+<!--                                                        <Label styleClass="card-title" text="In Maintenance" />-->
+<!--                                                        <Label fx:id="maintenanceEquipmentSummary" styleClass="card-value" text="0" />-->
+<!--                                                    </children>-->
+<!--                                                </VBox>-->
+<!--                                                <VBox styleClass="summary-card, people-card" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">-->
+<!--                                                    <children>-->
+<!--                                                        <Label styleClass="card-title" text="Total Faculty" />-->
+<!--                                                        <Label fx:id="totalFacultySummary" styleClass="card-value" text="0" />-->
+<!--                                                    </children>-->
+<!--                                                </VBox>-->
+<!--                                                <VBox styleClass="summary-card, people-card" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">-->
+<!--                                                    <children>-->
+<!--                                                        <Label styleClass="card-title" text="Total Employees" />-->
+<!--                                                        <Label fx:id="totalEmployeeSummary" styleClass="card-value" text="0" />-->
+<!--                                                    </children>-->
+<!--                                                </VBox>-->
+<!--                                                <VBox styleClass="summary-card, records-card" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">-->
+<!--                                                    <children>-->
+<!--                                                        <Label styleClass="card-title" text="Total Issues" />-->
+<!--                                                        <Label fx:id="totalIssuesSummary" styleClass="card-value" text="0" />-->
+<!--                                                    </children>-->
+<!--                                                </VBox>-->
+<!--                                                <VBox styleClass="summary-card, pending-card" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" alignment="CENTER">-->
+<!--                                                    <children>-->
+<!--                                                        <Label styleClass="card-title" text="Pending Returns" />-->
+<!--                                                        <Label fx:id="pendingReturnsSummary" styleClass="card-value" text="0" />-->
+<!--                                                    </children>-->
+<!--                                                </VBox>-->
+<!--                                            </children>-->
+                                        </GridPane>
+
+                                        <!-- Custom Report Filters -->
+                                        <VBox styleClass="filter-section" spacing="10.0">
                                             <children>
-                                                <Label styleClass="card-title" text="Total Equipment" />
-                                                <Label fx:id="totalEquipmentSummary" styleClass="card-value" text="0" />
-                                            </children>
-                                        </VBox>
-                                        <VBox styleClass="summary-card, available-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                            <children>
-                                                <Label styleClass="card-title" text="Available" />
-                                                <Label fx:id="availableEquipmentSummary" styleClass="card-value" text="0" />
-                                            </children>
-                                        </VBox>
-                                        <VBox styleClass="summary-card, issued-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
-                                            <children>
-                                                <Label styleClass="card-title" text="Currently Issued" />
-                                                <Label fx:id="issuedEquipmentSummary" styleClass="card-value" text="0" />
-                                            </children>
-                                        </VBox>
-                                        <VBox styleClass="summary-card, maintenance-card" GridPane.columnIndex="3" GridPane.rowIndex="0">
-                                            <children>
-                                                <Label styleClass="card-title" text="In Maintenance" />
-                                                <Label fx:id="maintenanceEquipmentSummary" styleClass="card-value" text="0" />
+                                                <Label styleClass="section-title" text="Custom Report Generator" />
+                                                <HBox spacing="15.0" alignment="CENTER_LEFT">
+                                                    <children>
+                                                        <Label text="Status:" />
+                                                        <ComboBox fx:id="statusFilterCombo" prefWidth="120.0" />
+                                                        <Label text="Category:" />
+                                                        <ComboBox fx:id="categoryFilterCombo" prefWidth="120.0" />
+                                                        <Label text="From Date:" />
+                                                        <DatePicker fx:id="fromDatePicker" />
+                                                        <Label text="To Date:" />
+                                                        <DatePicker fx:id="toDatePicker" />
+                                                        <Button onAction="#handleGenerateCustomReport" styleClass="generate-button" text="Generate Report" />
+                                                    </children>
+                                                </HBox>
                                             </children>
                                         </VBox>
 
-                                        <VBox styleClass="summary-card, people-card" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                        <!-- Custom Report Results Section (NEW) -->
+                                        <VBox fx:id="customReportSection" spacing="15.0" styleClass="custom-report-section">
                                             <children>
-                                                <Label styleClass="card-title" text="Total Faculty" />
-                                                <Label fx:id="totalFacultySummary" styleClass="card-value" text="0" />
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                    <children>
+                                                        <Label styleClass="table-title" text="Filtered Equipment Report" />
+                                                        <Region HBox.hgrow="ALWAYS" />
+                                                        <Button fx:id="exportCustomReportButton" onAction="#handleExportCustomReport" styleClass="export-button" text="📊 Export to Excel" disable="true" />
+                                                    </children>
+                                                </HBox>
+                                                <TableView fx:id="customReportTable" prefHeight="400.0" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="customNameColumn" prefWidth="140.0" text="Equipment Name" />
+                                                        <TableColumn fx:id="customModelColumn" prefWidth="110.0" text="Model" />
+                                                        <TableColumn fx:id="customSerialColumn" prefWidth="120.0" text="Serial Number" />
+                                                        <TableColumn fx:id="customCategoryColumn" prefWidth="90.0" text="Category" />
+<!--                                                        <TableColumn fx:id="customBrandColumn" prefWidth="90.0" text="Brand" />-->
+                                                        <TableColumn fx:id="customStatusColumn" prefWidth="90.0" text="Status" />
+                                                        <TableColumn fx:id="customPurchaseDateColumn" prefWidth="100.0" text="Purchase Date" />
+                                                    </columns>
+                                                    <placeholder>
+                                                        <Label text="Use the filters above to generate a custom report" />
+                                                    </placeholder>
+                                                </TableView>
                                             </children>
                                         </VBox>
-                                        <VBox styleClass="summary-card, people-card" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                            <children>
-                                                <Label styleClass="card-title" text="Total Employees" />
-                                                <Label fx:id="totalEmployeeSummary" styleClass="card-value" text="0" />
-                                            </children>
-                                        </VBox>
-                                        <VBox styleClass="summary-card, records-card" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                                            <children>
-                                                <Label styleClass="card-title" text="Total Issues" />
-                                                <Label fx:id="totalIssuesSummary" styleClass="card-value" text="0" />
-                                            </children>
-                                        </VBox>
-                                        <VBox styleClass="summary-card, pending-card" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                                            <children>
-                                                <Label styleClass="card-title" text="Pending Returns" />
-                                                <Label fx:id="pendingReturnsSummary" styleClass="card-value" text="0" />
-                                            </children>
-                                        </VBox>
+
                                     </children>
-                                </GridPane>
-
-                                <!-- Custom Report Filters -->
-                                <VBox styleClass="filter-section" spacing="10.0">
-                                    <children>
-                                        <Label styleClass="section-title" text="Custom Report Generator" />
-
-                                        <HBox spacing="15.0" alignment="CENTER_LEFT">
-                                            <children>
-                                                <Label text="Status:" />
-                                                <ComboBox fx:id="statusFilterCombo" prefWidth="120.0" />
-
-                                                <Label text="Category:" />
-                                                <ComboBox fx:id="categoryFilterCombo" prefWidth="120.0" />
-
-                                                <Label text="From Date:" />
-                                                <DatePicker fx:id="fromDatePicker" />
-
-                                                <Label text="To Date:" />
-                                                <DatePicker fx:id="toDatePicker" />
-
-                                                <Button onAction="#handleGenerateCustomReport" styleClass="generate-button" text="Generate Report" />
-                                            </children>
-                                        </HBox>
-                                    </children>
+                                    <padding>
+                                        <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
+                                    </padding>
                                 </VBox>
-                            </children>
-                            <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" top="10.0" />
-                            </padding>
-                        </VBox>
+                            </content>
+                        </ScrollPane>
                     </content>
                 </Tab>
 
@@ -139,7 +164,6 @@
                                         <Button onAction="#handleExportAvailableEquipment" styleClass="export-button" text="📊 Export to Excel" />
                                     </children>
                                 </HBox>
-
                                 <TableView fx:id="availableEquipmentTable" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="availableNameColumn" prefWidth="150.0" text="Equipment Name" />
@@ -169,7 +193,6 @@
                                         <Button onAction="#handleExportIssuedEquipment" styleClass="export-button" text="📊 Export to Excel" />
                                     </children>
                                 </HBox>
-
                                 <TableView fx:id="issuedEquipmentTable" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="issuedEquipmentColumn" prefWidth="150.0" text="Equipment" />
@@ -199,7 +222,6 @@
                                         <Button onAction="#handleExportAllRecords" styleClass="export-button" text="📊 Export to Excel" />
                                     </children>
                                 </HBox>
-
                                 <TableView fx:id="allRecordsTable" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="allRecordIdColumn" prefWidth="80.0" text="Record ID" />
