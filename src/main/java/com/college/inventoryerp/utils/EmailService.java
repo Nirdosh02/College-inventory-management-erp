@@ -10,12 +10,13 @@ import java.util.Properties;
 
 public class EmailService {
     // Email configuration - Update these with your SMTP server details
-    private static final String SMTP_HOST = "smtp.gmail.com";
-    private static final String SMTP_PORT = "587";
-    private static final String EMAIL_USERNAME = "nirdoshc02@gmail.com";
-    private static final String EMAIL_PASSWORD = "kpfo lzns dvrf llls"; // Use app password for Gmail
-    private static final String FROM_EMAIL = "nirdoshc02@gmail.com";
-    private static final String FROM_NAME = "College Inventory System";
+    private static final String SMTP_HOST = ConfigLoader.get("smtp.host");
+    private static final String SMTP_PORT = ConfigLoader.get("smtp.port");
+    private static final String EMAIL_USERNAME = ConfigLoader.get("email.username");
+    private static final String EMAIL_PASSWORD = System.getenv("EMAIL_PASSWORD");
+    private static final String FROM_EMAIL = ConfigLoader.get("email.from");
+    private static final String FROM_NAME = ConfigLoader.get("email.fromName");
+
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
