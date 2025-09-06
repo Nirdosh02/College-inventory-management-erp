@@ -18,6 +18,8 @@ public class IssueRecord {
     private final IntegerProperty quantity;
     private final IntegerProperty availableQty;
     private int quantityIssued;
+    private int totalQuantity;
+    private SimpleIntegerProperty totalQuantityProperty;
 
     public int getQuantityIssued() { return quantityIssued; }
     public int issuedQuantityProperty(){ return quantityIssued; }
@@ -31,14 +33,14 @@ public class IssueRecord {
     private final StringProperty employeeName;
 
     public IssueRecord(IntegerProperty quantity) {
-        this(0, 0, 0, 0, null, null, "issued", "", quantity, 0, "", "", "");
+        this(0, 0, 0, 0, null, null, "issued", "", quantity, 0, "", "", "", 0);
     }
 
 
 
     public IssueRecord(int recordId, int equipmentId, int facultyId, int employeeId,
                        LocalDate issueDate, LocalDate returnDate, String status, String notes, IntegerProperty quantity,int availableQty,
-                       String equipmentName, String facultyName, String employeeName) {
+                       String equipmentName, String facultyName, String employeeName, int totalQuantity) {
         this.recordId = new SimpleIntegerProperty(recordId);
         this.equipmentId = new SimpleIntegerProperty(equipmentId);
         this.facultyId = new SimpleIntegerProperty(facultyId);
@@ -52,6 +54,8 @@ public class IssueRecord {
         this.equipmentName = new SimpleStringProperty(equipmentName);
         this.facultyName = new SimpleStringProperty(facultyName);
         this.employeeName = new SimpleStringProperty(employeeName);
+        this.totalQuantity = totalQuantity;
+//        this.totalQuantityProperty = new SimpleIntegerProperty(totalQuantity);
     }
 
     // Record ID Property
@@ -118,6 +122,18 @@ public class IssueRecord {
     public IntegerProperty availableQuantityProperty(){ return availableQty;}
     public int getAvailableQty(){ return availableQty.get();}
     public void setAvailableQty(int availableQty){ this.availableQty.set(availableQty);}
+
+    public int getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    // totalQuantity property
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
+        this.totalQuantityProperty.set(totalQuantity); }
+    public SimpleIntegerProperty totalQuantityProperty() {
+        return totalQuantityProperty; }
+
 
     @Override
     public boolean equals(Object obj) {

@@ -33,6 +33,9 @@ public class EquipmentController implements Initializable {
     @FXML private TableColumn<Equipment, String> categoryColumn;
     @FXML private  TableColumn<Equipment, Integer> quantityColumn;
     @FXML private TableColumn<Equipment, String> dsrNumberColumn;
+    @FXML private TableColumn<Equipment, Integer> availableQuantityColumn;
+    @FXML private TableColumn<Equipment, Integer> issuedQuantityColumn;
+
 
     // Form controls
     @FXML private TextField nameField;
@@ -85,6 +88,9 @@ public class EquipmentController implements Initializable {
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         dsrNumberColumn.setCellValueFactory(new PropertyValueFactory<>("dsrNumber"));
+        availableQuantityColumn.setCellValueFactory(new PropertyValueFactory<>("availableQuantity"));
+        issuedQuantityColumn.setCellValueFactory(new PropertyValueFactory<>("issuedQuantity"));
+
 
         // Style status column based on status
         statusColumn.setCellFactory(column -> new TableCell<Equipment, String>() {

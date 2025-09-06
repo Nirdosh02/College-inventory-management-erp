@@ -128,16 +128,18 @@ public class EquipmentDAO {
             return false;
         }
     }
+
+    // Issue: only increase issued_quantity, ensure you don't exceed total quantity
     public boolean issueEquipment(int equipmentId, int issueCount) {
-        String query = "UPDATE equipment SET quantity = quantity - ?, issued_quantity = issued_quantity + ? WHERE equipment_id = ? AND quantity >= ?";
+        String query = "UPDATE equipment SET issued_quantity = issued_quantity + ? " +
+                "WHERE equipment_id = ? AND (issued_quantity + ?) <= quantity";
 
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setInt(1, issueCount);
-            pstmt.setInt(2, issueCount);
-            pstmt.setInt(3, equipmentId);
-            pstmt.setInt(4, issueCount); // ensure we don’t issue more than available
+            pstmt.setInt(2, equipmentId);
+            pstmt.setInt(3, issueCount); // check not exceeding total quantity
 
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -146,6 +148,45 @@ public class EquipmentDAO {
             return false;
         }
     }
+
+    // Return: only decrease issued_quantity, ensure it doesn't go negative
+    public boolean returnEquipment(int equipmentId, int returnCount) {
+        String query = "UPDATE equipment SET issued_quantity = issued_quantity - ? " +
+                "WHERE equipment_id = ? AND issued_quantity >= ?";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setInt(1, returnCount);
+            pstmt.setInt(2, equipmentId);
+            pstmt.setInt(3, returnCount); // ensure we don't reduce below 0
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error returning equipment: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+//    public boolean issueEquipment(int equipmentId, int issueCount) {
+//        String query = "UPDATE equipment SET quantity = quantity - ?, issued_quantity = issued_quantity + ? WHERE equipment_id = ? AND quantity >= ?";
+//
+//        try (Connection conn = dbConnection.getConnection();
+//             PreparedStatement pstmt = conn.prepareStatement(query)) {
+//
+//            pstmt.setInt(1, issueCount);
+//            pstmt.setInt(2, issueCount);
+//            pstmt.setInt(3, equipmentId);
+//            pstmt.setInt(4, issueCount); // ensure we don’t issue more than available
+//
+//            return pstmt.executeUpdate() > 0;
+//        } catch (SQLException e) {
+//            System.err.println("Error issuing equipment: " + e.getMessage());
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
 
     public boolean deleteEquipment(int equipmentId) {

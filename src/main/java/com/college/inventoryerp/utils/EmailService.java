@@ -5,6 +5,7 @@ import com.college.inventoryerp.model.IssueRecord;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
@@ -76,6 +77,53 @@ public class EmailService {
         content.append("</body></html>");
         return content.toString();
     }
+
+    public static boolean sendReturnConfirmationEmail(IssueRecord issueRecord, String facultyEmail) {
+        try {
+            // Create email session
+            Session session = createEmailSession();
+
+            // Create message
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(FROM_EMAIL, FROM_NAME));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(facultyEmail));
+            message.setSubject("Equipment Returned - " + issueRecord.getEquipmentName());
+
+            // Create email content
+            String emailContent = createReturnConfirmationContent(issueRecord);
+            message.setContent(emailContent, "text/html; charset=utf-8");
+
+            // Send email
+            Transport.send(message);
+
+            System.out.println("Return confirmation email sent to: " + facultyEmail);
+            return true;
+
+        } catch (Exception e) {
+            System.err.println("Error sending return confirmation email: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private static String createReturnConfirmationContent(IssueRecord issueRecord) {
+        StringBuilder content = new StringBuilder();
+        content.append("<html><body>");
+        content.append("<h2>Equipment Returned Successfully</h2>");
+        content.append("<p>Dear ").append(issueRecord.getFacultyName()).append(",</p>");
+        content.append("<p>This email confirms that the following equipment has been returned:</p>");
+        content.append("<div style='background-color: #f9f9f9; padding: 15px; margin: 10px 0;'>");
+        content.append("<h3>Equipment Details:</h3>");
+        content.append("<p><strong>Equipment Name:</strong> ").append(issueRecord.getEquipmentName()).append("</p>");
+        content.append("<p><strong>Quantity Returned:</strong> ").append(issueRecord.getQuantity()).append("</p>");
+        content.append("<p><strong>Return Date:</strong> ").append(LocalDate.now().format(DATE_FORMATTER)).append("</p>");
+        content.append("<p><strong>Issued By:</strong> ").append(issueRecord.getEmployeeName()).append("</p>");
+        content.append("</div>");
+        content.append("<p><strong>Thank you!</strong></p>");
+        content.append("<p><small>This is an automated message from College Inventory ERP System.</small></p>");
+        content.append("</body></html>");
+        return content.toString();
+    }
+
 
     private static Session createEmailSession() {
         Properties properties = new Properties();

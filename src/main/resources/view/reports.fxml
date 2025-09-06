@@ -131,7 +131,7 @@
                                                         <TableColumn fx:id="customModelColumn" prefWidth="110.0" text="Model" />
                                                         <TableColumn fx:id="customSerialColumn" prefWidth="120.0" text="Serial Number" />
                                                         <TableColumn fx:id="customCategoryColumn" prefWidth="90.0" text="Category" />
-<!--                                                        <TableColumn fx:id="customBrandColumn" prefWidth="90.0" text="Brand" />-->
+                                                        <TableColumn fx:id="customQuantityColumn" prefWidth="90.0" text="Quantity" />
                                                         <TableColumn fx:id="customStatusColumn" prefWidth="90.0" text="Status" />
                                                         <TableColumn fx:id="customPurchaseDateColumn" prefWidth="100.0" text="Purchase Date" />
                                                     </columns>
@@ -170,7 +170,7 @@
                                         <TableColumn fx:id="availableModelColumn" prefWidth="120.0" text="Model" />
                                         <TableColumn fx:id="availableSerialColumn" prefWidth="130.0" text="Serial Number" />
                                         <TableColumn fx:id="availableCategoryColumn" prefWidth="100.0" text="Category" />
-                                        <TableColumn fx:id="availableBrandColumn" prefWidth="100.0" text="Brand" />
+                                        <TableColumn fx:id="availableQuantityColumn" prefWidth="100.0" text="Quantity" />
                                     </columns>
                                 </TableView>
                             </children>

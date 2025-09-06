@@ -30,7 +30,7 @@ public class ReportController implements Initializable {
     @FXML private TableColumn<Equipment, String> availableModelColumn;
     @FXML private TableColumn<Equipment, String> availableSerialColumn;
     @FXML private TableColumn<Equipment, String> availableCategoryColumn;
-    @FXML private TableColumn<Equipment, String> availableBrandColumn;
+    @FXML private TableColumn<Equipment, String> availableQuantityColumn;
 
     // Issue Records Reports
     @FXML private TableView<IssueRecord> issuedEquipmentTable;
@@ -57,7 +57,7 @@ public class ReportController implements Initializable {
     @FXML private TableColumn<Equipment, String> customModelColumn;
     @FXML private TableColumn<Equipment, String> customSerialColumn;
     @FXML private TableColumn<Equipment, String> customCategoryColumn;
-//    @FXML private TableColumn<Equipment, String> customBrandColumn;
+    @FXML private TableColumn<Equipment, String> customQuantityColumn;
     @FXML private TableColumn<Equipment, String> customStatusColumn;
     @FXML private TableColumn<Equipment, LocalDate> customPurchaseDateColumn;
     @FXML private Button exportCustomReportButton;
@@ -122,7 +122,7 @@ public class ReportController implements Initializable {
         availableModelColumn.setCellValueFactory(new PropertyValueFactory<>("model"));
         availableSerialColumn.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
         availableCategoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-        availableBrandColumn.setCellValueFactory(new PropertyValueFactory<>("brand"));
+        availableQuantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         availableEquipmentTable.setItems(availableEquipmentList);
     }
 
@@ -173,7 +173,7 @@ public class ReportController implements Initializable {
         customModelColumn.setCellValueFactory(new PropertyValueFactory<>("model"));
         customSerialColumn.setCellValueFactory(new PropertyValueFactory<>("serialNumber"));
         customCategoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-//        customBrandColumn.setCellValueFactory(new PropertyValueFactory<>("brand"));
+        customQuantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         customStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         customPurchaseDateColumn.setCellValueFactory(new PropertyValueFactory<>("purchaseDate"));
 

@@ -143,12 +143,14 @@
                                 <TableColumn fx:id="idColumn" text="ID" prefWidth="50" />
                                 <TableColumn fx:id="nameColumn" text="Name" prefWidth="150" />
                                 <TableColumn fx:id="modelColumn" text="Model" prefWidth="120" />
-                                <TableColumn fx:id="serialColumn" text="Serial Number" prefWidth="150" />
+                                <TableColumn fx:id="dsrNumberColumn" text="DSR Number" prefWidth="100" />
                                 <TableColumn fx:id="purchaseDateColumn" text="Purchase Date" prefWidth="120" />
                                 <TableColumn fx:id="statusColumn" text="Status" prefWidth="100" />
+                                <TableColumn fx:id="quantityColumn" text="Total Quantity" prefWidth="80" />
+                                <TableColumn fx:id="availableQuantityColumn" text="Available Quantity" prefWidth="150"/>
+                                <TableColumn fx:id="issuedQuantityColumn" text="Issued Quantity" prefWidth="150"/>
                                 <TableColumn fx:id="categoryColumn" text="Category" prefWidth="100" />
-                                <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="80" />
-                                <TableColumn fx:id="dsrNumberColumn" text="DSR Number" prefWidth="100" />
+                                <TableColumn fx:id="serialColumn" text="Serial Number" prefWidth="150" />
                             </columns>
                         </TableView>
                     </children>

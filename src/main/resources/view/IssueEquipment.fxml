@@ -78,11 +78,12 @@
 
                     <TableView fx:id="currentIssuesTable" prefHeight="300.0">
                         <columns>
-                            <TableColumn fx:id="currentEquipmentColumn" prefWidth="200.0" text="Equipment" />
+                            <TableColumn fx:id="currentEquipmentColumn" prefWidth="150.0" text="Equipment" />
                             <TableColumn fx:id="currentFacultyColumn" prefWidth="150.0" text="Faculty" />
                             <TableColumn fx:id="currentEmployeeColumn" prefWidth="150.0" text="Issued By" />
                             <TableColumn fx:id="currentIssueDateColumn" prefWidth="90.0" text="Issue Date" />
-                            <TableColumn fx:id="currentQuantityColumn" prefWidth="80.0" text="Qty" />
+                            <TableColumn fx:id="totalQuantityColumn" prefWidth="80.0" text="Total Qty"/>
+                            <TableColumn fx:id="currentQuantityColumn" prefWidth="80.0" text="Issued Qty" />
                             <TableColumn fx:id="currentAvailableQuantityColumn" prefWidth="100.0" text="Available Qty" />
                         </columns>
                     </TableView>

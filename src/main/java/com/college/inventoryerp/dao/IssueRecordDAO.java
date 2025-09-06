@@ -23,57 +23,13 @@ public class IssueRecordDAO {
     public ObservableList<IssueRecord> getAllIssueRecords() {
         ObservableList<IssueRecord> issueRecords = FXCollections.observableArrayList();
         String query = """
-            SELECT ir.*, e.name as equipment_name, f.name as faculty_name, emp.name as employee_name,
-            (e.quantity - e.issued_quantity) as available_quantity
-            FROM issue_records ir
-            JOIN equipment e ON ir.equipment_id = e.equipment_id
-            JOIN faculty f ON ir.faculty_id = f.faculty_id
-            JOIN employees emp ON ir.employee_id = emp.employee_id
-            ORDER BY ir.issue_date DESC
-            """;
-
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                IssueRecord record = new IssueRecord(
-                        rs.getInt("record_id"),
-                        rs.getInt("equipment_id"),
-                        rs.getInt("faculty_id"),
-                        rs.getInt("employee_id"),
-                        rs.getDate("issue_date").toLocalDate(),
-                        rs.getDate("return_date") != null ? rs.getDate("return_date").toLocalDate() : null,
-                        rs.getString("status"),
-                        rs.getString("notes"),
-                        new SimpleIntegerProperty(rs.getInt("quantity")),
-                        rs.getInt("available_quantity"),
-                        rs.getString("equipment_name"),
-                        rs.getString("faculty_name"),
-                        rs.getString("employee_name")
-                );
-                issueRecords.add(record);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching all issue records: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return issueRecords;
-    }
-
-    public ObservableList<IssueRecord> getCurrentlyIssuedRecords() {
-        ObservableList<IssueRecord> issueRecords = FXCollections.observableArrayList();
-        String query = """
-        SELECT ir.*, e.name as equipment_name, e.serial_number, e.quantity as total_quantity, 
-               e.issued_quantity, f.name as faculty_name, 
-               f.department, emp.name as employee_name,
-               (e.quantity - e.issued_quantity) as available_quantity,
-               DATEDIFF(CURDATE(), ir.issue_date) as days_issued
+        SELECT ir.*, e.name as equipment_name, f.name as faculty_name, emp.name as employee_name,
+        e.quantity as total_quantity,  -- ADD: Include total_quantity
+        (e.quantity - e.issued_quantity) as available_quantity
         FROM issue_records ir
         JOIN equipment e ON ir.equipment_id = e.equipment_id
         JOIN faculty f ON ir.faculty_id = f.faculty_id
         JOIN employees emp ON ir.employee_id = emp.employee_id
-        WHERE ir.status = 'issued'
         ORDER BY ir.issue_date DESC
         """;
 
@@ -95,7 +51,56 @@ public class IssueRecordDAO {
                         rs.getInt("available_quantity"),
                         rs.getString("equipment_name"),
                         rs.getString("faculty_name"),
-                        rs.getString("employee_name")
+                        rs.getString("employee_name"),
+                        rs.getInt("total_quantity")  // ADD: Pass total_quantity parameter
+                );
+                issueRecords.add(record);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching all issue records: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return issueRecords;
+    }
+
+
+    public ObservableList<IssueRecord> getCurrentlyIssuedRecords() {
+        ObservableList<IssueRecord> issueRecords = FXCollections.observableArrayList();
+        String query = """
+    SELECT ir.*, e.name as equipment_name, e.serial_number, 
+           e.quantity as total_quantity,
+           e.issued_quantity, f.name as faculty_name, 
+           f.department, emp.name as employee_name,
+           (e.quantity - e.issued_quantity) as available_quantity,
+           DATEDIFF(CURDATE(), ir.issue_date) as days_issued
+    FROM issue_records ir
+    JOIN equipment e ON ir.equipment_id = e.equipment_id
+    JOIN faculty f ON ir.faculty_id = f.faculty_id
+    JOIN employees emp ON ir.employee_id = emp.employee_id
+    WHERE ir.status = 'issued'
+    ORDER BY ir.issue_date DESC
+    """;
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                IssueRecord record = new IssueRecord(
+                        rs.getInt("record_id"),
+                        rs.getInt("equipment_id"),
+                        rs.getInt("faculty_id"),
+                        rs.getInt("employee_id"),
+                        rs.getDate("issue_date").toLocalDate(),
+                        rs.getDate("return_date") != null ? rs.getDate("return_date").toLocalDate() : null,
+                        rs.getString("status"),
+                        rs.getString("notes"),
+                        new SimpleIntegerProperty(rs.getInt("quantity")),
+                        rs.getInt("available_quantity"),
+                        rs.getString("equipment_name"),
+                        rs.getString("faculty_name"),
+                        rs.getString("employee_name"),
+                        rs.getInt("total_quantity")  // ADD: Pass total quantity
                 );
 
                 issueRecords.add(record);
@@ -106,6 +111,7 @@ public class IssueRecordDAO {
         }
         return issueRecords;
     }
+
 
 //    public boolean issueEquipment(int equipmentId, int facultyId, int employeeId, LocalDate issueDate, String notes) {
 //        Connection conn = null;
@@ -226,100 +232,105 @@ public class IssueRecordDAO {
         }
     }
 
+    public boolean returnEquipment(int issueId, LocalDate returnDate, int equipmentId) {
+        Connection conn = null;
+        try {
+            conn = dbConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            // Get the quantity that was issued from the issue_records table
+            String getQuantityQuery = "SELECT quantity, equipment_id FROM issue_records WHERE record_id = ? AND status = 'issued'";
+            int issuedQuantity = 0;
+            int dbEquipmentId = 0;
+
+            try (PreparedStatement pstmt = conn.prepareStatement(getQuantityQuery)) {
+                pstmt.setInt(1, issueId);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        issuedQuantity = rs.getInt("quantity");
+                        dbEquipmentId = rs.getInt("equipment_id");
+                        System.out.println("DEBUG: Found issue record - quantity=" + issuedQuantity +
+                                ", equipmentId=" + dbEquipmentId);
+                    } else {
+                        System.out.println("DEBUG: No active issue record found for ID: " + issueId);
+                        conn.rollback();
+                        return false;
+                    }
+                }
+            }
+
+            // Update the issue record status and return date
+            String updateIssueQuery = "UPDATE issue_records SET return_date = ?, status = 'returned' WHERE record_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(updateIssueQuery)) {
+                pstmt.setDate(1, Date.valueOf(returnDate));
+                pstmt.setInt(2, issueId);
+                int rowsUpdated = pstmt.executeUpdate();
+                System.out.println("DEBUG: Issue record updated. Rows affected: " + rowsUpdated);
+            }
+
+            // Decrease the issued_quantity in equipment table
+            String updateEquipmentQuery = "UPDATE equipment SET issued_quantity = issued_quantity - ? WHERE equipment_id = ?";
+            try (PreparedStatement pstmt = conn.prepareStatement(updateEquipmentQuery)) {
+                pstmt.setInt(1, issuedQuantity);
+                pstmt.setInt(2, equipmentId);
+                int rowsUpdated = pstmt.executeUpdate();
+                System.out.println("DEBUG: Equipment updated. Decreased issued_quantity by " + issuedQuantity +
+                        ". Rows affected: " + rowsUpdated);
+            }
+
+            conn.commit();
+            System.out.println("DEBUG: Equipment return completed successfully");
+            return true;
+
+        } catch (SQLException e) {
+            try {
+                if (conn != null) conn.rollback();
+                System.out.println("DEBUG: Transaction rolled back due to error");
+            } catch (SQLException ignored) {}
+            System.err.println("ERROR returning equipment: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (conn != null) conn.setAutoCommit(true);
+            } catch (SQLException ignored) {}
+        }
+    }
 
 
 
-    //    public boolean returnEquipment(int recordId, LocalDate returnDate, int quantity, int issueId) {
-//        Connection conn = null;
-//        try {
-//            conn = dbConnection.getConnection();
+
+    //    public boolean returnEquipment(int issueId, LocalDate returnDate, int qty, int equipmentId) {
+//        String updateIssue = "UPDATE issue_records SET return_date = ?, status = 'returned' WHERE record_id = ?";
+//        String updateEquipment = "UPDATE equipment SET issued_quantity = issued_quantity - ? WHERE equipment_id = ?";
+//
+//        try (Connection conn = dbConnection.getConnection()) {
 //            conn.setAutoCommit(false);
 //
-//            // Get equipment ID from issue record
-//            int equipmentId = 0;
-//            String getEquipmentQuery = "SELECT equipment_id FROM issue_records WHERE record_id = ?";
-//            try (PreparedStatement pstmt = conn.prepareStatement(getEquipmentQuery)) {
-//                pstmt.setInt(1, recordId);
-//                try (ResultSet rs = pstmt.executeQuery()) {
-//                    if (rs.next()) {
-//                        equipmentId = rs.getInt("equipment_id");
-//                    }
-//                }
-//            }
-//
-//            if (equipmentId == 0) {
-//                conn.rollback();
-//                return false;
-//            }
-//
-//            // Update issue record
-//            String updateQuery = "UPDATE issue_records SET return_date = ?, status = 'returned' WHERE record_id = ?";
-//            try (PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
+//            // Mark as returned
+//            try (PreparedStatement pstmt = conn.prepareStatement(updateIssue)) {
 //                pstmt.setDate(1, Date.valueOf(returnDate));
-//                pstmt.setInt(2, recordId);
+//                pstmt.setInt(2, issueId);
 //                pstmt.executeUpdate();
 //            }
 //
-//            // Update equipment status to 'available'
-//            if (!equipmentDAO.updateEquipmentStatus(conn, equipmentId, "available")) {
-//                conn.rollback();
-//                return false;
+//            // Update stock
+//            try (PreparedStatement pstmt = conn.prepareStatement(updateEquipment)) {
+//                pstmt.setInt(1, qty);
+//                pstmt.setInt(2, equipmentId);
+//                pstmt.executeUpdate();
 //            }
 //
 //            conn.commit();
 //            return true;
+//
 //        } catch (SQLException e) {
-//            try {
-//                if (conn != null) {
-//                    conn.rollback();
-//                }
-//            } catch (SQLException rollbackEx) {
-//                System.err.println("Error during rollback: " + rollbackEx.getMessage());
-//            }
-//            System.err.println("Error returning equipment: " + e.getMessage());
 //            e.printStackTrace();
 //            return false;
-//        } finally {
-//            try {
-//                if (conn != null) {
-//                    conn.setAutoCommit(true);
-//                }
-//            } catch (SQLException e) {
-//                System.err.println("Error resetting auto-commit: " + e.getMessage());
-//            }
 //        }
 //    }
-    public boolean returnEquipment(int issueId, LocalDate returnDate, int qty, int equipmentId) {
-        String updateIssue = "UPDATE issue_records SET return_date = ?, status = 'returned' WHERE record_id = ?";
-        String updateEquipment = "UPDATE equipment SET issued_quantity = issued_quantity - ? WHERE equipment_id = ?";
-
-        try (Connection conn = dbConnection.getConnection()) {
-            conn.setAutoCommit(false);
-
-            // Mark as returned
-            try (PreparedStatement pstmt = conn.prepareStatement(updateIssue)) {
-                pstmt.setDate(1, Date.valueOf(returnDate));
-                pstmt.setInt(2, issueId);
-                pstmt.executeUpdate();
-            }
-
-            // Update stock
-            try (PreparedStatement pstmt = conn.prepareStatement(updateEquipment)) {
-                pstmt.setInt(1, qty);
-                pstmt.setInt(2, equipmentId);
-                pstmt.executeUpdate();
-            }
-
-            conn.commit();
-            return true;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
     public int getAvailableQuantity(int equipmentId){
-        String query = "SELECT quantity, issued_quantity FROM equipment WHERE equipmentId = ? ";
+        String query = "SELECT quantity, issued_quantity FROM equipment WHERE equipment_id = ? ";
         try(Connection conn = dbConnection.getConnection();
         PreparedStatement pstmt = conn.prepareStatement(query)){
             pstmt.setInt(1, equipmentId);
@@ -338,23 +349,5 @@ public class IssueRecordDAO {
     }
 
 
-//    public boolean isEquipmentCurrentlyIssued(int equipmentId) {
-//        String query = "SELECT COUNT(*) FROM issue_records WHERE equipment_id = ? OR status = 'issued' OR ";
-//
-//        try (Connection conn = dbConnection.getConnection();
-//             PreparedStatement pstmt = conn.prepareStatement(query)) {
-//
-//            pstmt.setInt(1, equipmentId);
-//            try (ResultSet rs = pstmt.executeQuery()) {
-//                if (rs.next()) {
-//                    return rs.getInt(1) > 0;
-//                }
-//            }
-//        } catch (SQLException e) {
-//            System.err.println("Error checking equipment issue status: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        return false;
-//    }
 }
 

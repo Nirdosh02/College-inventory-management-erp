@@ -39,6 +39,7 @@ public class IssueEquipmentController implements Initializable {
     @FXML private TableColumn<IssueRecord, String> currentFacultyColumn;
     @FXML private TableColumn<IssueRecord, String> currentEmployeeColumn;
     @FXML private TableColumn<IssueRecord, LocalDate> currentIssueDateColumn;
+    @FXML private TableColumn<IssueRecord, Integer> totalQuantityColumn;
     @FXML private TableColumn<IssueRecord, Integer> currentQuantityColumn;
     @FXML private TableColumn<IssueRecord, Integer> currentAvailableQuantityColumn;
     @FXML private Button returnButton;
@@ -147,7 +148,15 @@ public class IssueEquipmentController implements Initializable {
         currentFacultyColumn.setCellValueFactory(cellData -> cellData.getValue().facultyNameProperty());
         currentEmployeeColumn.setCellValueFactory(cellData -> cellData.getValue().employeeNameProperty());
         currentIssueDateColumn.setCellValueFactory(cellData -> cellData.getValue().issueDateProperty());
-//        currentQuantityColumn.setCellValueFactory(cellData->  new SimpleIntegerProperty(cellData.getValue().getQuantity()).asObject());
+        totalQuantityColumn.setCellValueFactory(cellData -> {
+            IssueRecord record = cellData.getValue();
+            if (record.totalQuantityProperty() != null) {
+                return record.totalQuantityProperty().asObject();
+            } else {
+                // Return a default value if totalQuantityProperty is null
+                return new SimpleIntegerProperty(record.getTotalQuantity()).asObject();
+            }
+        });
         currentQuantityColumn.setCellValueFactory(cellData -> cellData.getValue().quantityProperty().asObject());
         currentAvailableQuantityColumn.setCellValueFactory(cellData -> cellData.getValue().availableQuantityProperty().asObject());
 
@@ -249,7 +258,8 @@ public class IssueEquipmentController implements Initializable {
                 selectedEquipment.getQuantity() - (selectedEquipment.getIssuedQuantity() + requestedQty), // available after issue
                 selectedEquipment.getName(),
                 selectedFaculty.getName(),
-                selectedEmployee.getName()
+                selectedEmployee.getName(),
+                selectedEquipment.getQuantity()
         );
 
 
@@ -274,7 +284,6 @@ public class IssueEquipmentController implements Initializable {
         }
     }
 
-
     @FXML
     private void handleReturnEquipment() {
         IssueRecord selectedRecord = currentIssuesTable.getSelectionModel().getSelectedItem();
@@ -283,35 +292,72 @@ public class IssueEquipmentController implements Initializable {
             return;
         }
 
+        Faculty selectedFaculty = facultyDAO.getFacultyById(selectedRecord.getFacultyId());
+
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
         confirmDialog.setTitle("Confirm Return");
         confirmDialog.setHeaderText("Return Equipment");
         confirmDialog.setContentText("Are you sure you want to return this equipment?");
 
         if (confirmDialog.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            // ✅ Step 1: get the equipmentId and quantity issued
-//            int equipmentId = selectedRecord.getEquipmentId();
-//            int issuedQty = selectedRecord.getQuantityIssued(); // make sure IssueRecord has quantity field
 
-            // ✅ Step 2: update stock in Equipment table
-//            boolean stockUpdated = equipmentDAO.issueEquipment(equipmentId, issuedQty);
+            System.out.println("DEBUG: Attempting to return equipment - Record ID: " + selectedRecord.getRecordId() +
+                    ", Equipment ID: " + selectedRecord.getEquipmentId());
 
-            // ✅ Step 3: update issue record (mark as returned)
             boolean recordUpdated = issueRecordDAO.returnEquipment(
-                    selectedRecord.getRecordId(),
-                    LocalDate.now(),
-                    selectedRecord.getEquipmentId(),
-                    selectedRecord.getQuantity()
+                    selectedRecord.getRecordId(),      // issueId
+                    LocalDate.now(),                   // returnDate
+                    selectedRecord.getEquipmentId()    // equipmentId
             );
 
             if (recordUpdated) {
                 ValidationUtils.showSuccess("Equipment returned successfully!");
+                if (selectedFaculty != null && selectedFaculty.getEmail() != null && !selectedFaculty.getEmail().isEmpty()) {
+                    EmailService.sendReturnConfirmationEmail(selectedRecord, selectedFaculty.getEmail());
+                }
                 refreshData();
             } else {
                 ValidationUtils.showError("Failed to return equipment. Please try again.");
             }
         }
     }
+
+
+
+
+//    @FXML
+//    private void handleReturnEquipment() {
+//        IssueRecord selectedRecord = currentIssuesTable.getSelectionModel().getSelectedItem();
+//        Faculty selectedFaculty = facultyDAO.getFacultyById(selectedRecord.getFacultyId());
+//        if (selectedRecord == null) {
+//            ValidationUtils.showError("Please select a record to return.");
+//            return;
+//        }
+//
+//        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+//        confirmDialog.setTitle("Confirm Return");
+//        confirmDialog.setHeaderText("Return Equipment");
+//        confirmDialog.setContentText("Are you sure you want to return this equipment?");
+//
+//        if (confirmDialog.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+//            boolean recordUpdated = issueRecordDAO.returnEquipment(
+//                    selectedRecord.getRecordId(),
+//                    LocalDate.now(),
+//                    selectedRecord.getEquipmentId(),
+//                    selectedRecord.getQuantity()
+//            );
+//
+//            if (recordUpdated) {
+//                ValidationUtils.showSuccess("Equipment returned successfully!");
+//                if (selectedFaculty != null && selectedFaculty.getEmail() != null && !selectedFaculty.getEmail().isEmpty()) {
+//                    EmailService.sendReturnConfirmationEmail(selectedRecord, selectedFaculty.getEmail());
+//                }
+//                refreshData();
+//            } else {
+//                ValidationUtils.showError("Failed to return equipment. Please try again.");
+//            }
+//        }
+//    }
 
     //    private void handleReturnEquipment() {
 //        IssueRecord selectedRecord = currentIssuesTable.getSelectionModel().getSelectedItem();
