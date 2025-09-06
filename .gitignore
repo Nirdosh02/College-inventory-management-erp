@@ -6,6 +6,8 @@ target/
 src/main/resources/config.properties
 config.properties
 
+installer/*.exe
+installer/*.msi
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
