@@ -1,11 +1,14 @@
+# Build output
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Config files (local only)
 src/main/resources/config.properties
 config.properties
 
+# Installer artifacts
 installer/*.exe
 installer/*.msi
 
